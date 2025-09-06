@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive JavaScript Playground</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #e74c3c;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --text-color: #333;
+            --background-color: #fff;
+            --card-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --text-color: #ecf0f1;
+            --background-color: #2c3e50;
+            --light-color: #34495e;
+            --card-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            transition: var(--transition);
+            padding-bottom: 2rem;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background-color: var(--light-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        h3 {
+            margin: 1rem 0 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+            margin: 0.5rem 0.5rem 0.5rem 0;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+
+        .btn-accent:hover {
+            background-color: #c0392b;
+        }
+
+        .mode-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .interactive-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .interactive-element {
+            background-color: var(--light-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+
+        .counter-display {
+            font-size: 3rem;
+            text-align: center;
+            margin: 1rem 0;
+            color: var(--primary-color);
+        }
+
+        .faq-item {
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            padding: 1rem;
+            display: none;
+        }
+
+        .faq-answer.show {
+            display: block;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--light-color);
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            color: var(--text-color);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .tab-container {
+            margin-top: 1rem;
+        }
+
+        .tab-buttons {
+            display: flex;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            background: #ddd;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .tab-content {
+            padding: 1.5rem;
+            background-color: var(--light-color);
+            border-radius: 0 0 8px 8px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        form {
+            background-color: var(--light-color);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        .error {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .success-message {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .interactive-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab-buttons {
+                flex-direction: column;
+            }
+            
+            .mode-toggle {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Interactive JavaScript Playground</h1>
+            <p>Explore the power of JavaScript with these interactive features</p>
+        </div>
+        <button class="btn mode-toggle" id="modeToggle">Dark Mode</button>
+    </header>
+
+    <div class="container">
+        <div class="intro">
+            <p>This page demonstrates various JavaScript features including event handling, interactive elements, and form validation. Try them out!</p>
+        </div>
+
+        <div class="card">
+            <h2>Event Handling Examples</h2>
+            
+            <div class="interactive-section">
+                <div class="interactive-element">
+                    <h3>Click Events</h3>
+                    <p>Click the button to see a message</p>
+                    <button class="btn" id="clickButton">Click Me!</button>
+                    <p id="clickMessage" style="margin-top: 1rem;"></p>
+                </div>
+                
+                <div class="interactive-element">
+                    <h3>Mouse Events</h3>
+                    <p>Hover over this box to change its color</p>
+                    <div id="hoverBox" style="height: 100px; margin: 1rem 0; background-color: #ddd; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
+                        Hover over me!
+                    </div>
+                </div>
+                
+                <div class="interactive-element">
+                    <h3>Keyboard Events</h3>
+                    <p>Type in the input field to see the text mirrored</p>
+                    <input type="text" id="keyboardInput" placeholder="Start typing...">
+                    <p style="margin-top: 1rem;">Mirrored text: <span id="mirroredText"></span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Interactive Elements</h2>
+            
+            <div class="interactive-section">
+                <div class="interactive-element">
+                    <h3>Counter</h3>
+                    <p>Click the buttons to change the counter value</p>
+                    <div class="counter-display" id="counterValue">0</div>
+                    <button class="btn" id="decrementBtn">-</button>
+                    <button class="btn" id="incrementBtn">+</button>
+                    <button class="btn btn-accent" id="resetCounterBtn">Reset</button>
+                </div>
+                
+                <div class="interactive-element">
+                    <h3>FAQ Section</h3>
+                    <p>Click on questions to expand answers</p>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>What is JavaScript?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>JavaScript is a programming language that enables interactive web pages. It is an essential part of web applications.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>What are JavaScript events?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Events are actions that happen in the browser, such as clicks, mouse movements, keyboard input, etc. JavaScript can detect these events and respond to them.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>What is DOM manipulation?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>DOM manipulation is the process of interacting with the Document Object Model (DOM) of a web page using JavaScript to dynamically change content, structure, and style.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="interactive-element">
+                    <h3>Tabbed Interface</h3>
+                    <p>Click on tabs to switch between content</p>
+                    
+                    <div class="tab-container">
+                        <div class="tab-buttons">
+                            <button class="tab-btn active" data-tab="tab1">Tab 1</button>
+                            <button class="tab-btn" data-tab="tab2">Tab 2</button>
+                            <button class="tab-btn" data-tab="tab3">Tab 3</button>
+                        </div>
+                        
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab1">
+                                <h4>First Tab Content</h4>
+                                <p>This is the content for the first tab. JavaScript makes it easy to create tabbed interfaces.</p>
+                            </div>
+                            
+                            <div class="tab-pane" id="tab2">
+                                <h4>Second Tab Content</h4>
+                                <p>This is the content for the second tab. Each tab can contain different information.</p>
+                            </div>
+                            
+                            <div class="tab-pane" id="tab3">
+                                <h4>Third Tab Content</h4>
+                                <p>This is the content for the third tab. Tabs help organize content in a compact space.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Form Validation</h2>
+            
+            <form id="validationForm">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" placeholder="Your full name">
+                    <div class="error" id="nameError">Please enter a valid name (min 2 characters)</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Your email address">
+                    <div class="error" id="emailError">Please enter a valid email address</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Create a password">
+                    <div class="error" id="passwordError">Password must be at least 8 characters with a number and uppercase letter</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm your password">
+                    <div class="error" id="confirmPasswordError">Passwords do not match</div>
+                </div>
+                
+                <button type="submit" class="btn btn-secondary">Submit Form</button>
+                
+                <div class="success-message" id="successMessage">
+                    Form submitted successfully!
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>Interactive JavaScript Assignment &copy; 2023</p>
+        </div>
+    </footer>
+
+    <script>
+        // Dark/Light Mode Toggle
+        const modeToggle = document.getElementById('modeToggle');
+        modeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                modeToggle.textContent = 'Light Mode';
+            } else {
+                modeToggle.textContent = 'Dark Mode';
+            }
+        });
+
+        // Click Event Example
+        const clickButton = document.getElementById('clickButton');
+        const clickMessage = document.getElementById('clickMessage');
+        clickButton.addEventListener('click', () => {
+            clickMessage.textContent = 'Button was clicked! JavaScript is working!';
+            clickMessage.style.color = '#2ecc71';
+        });
+
+        // Mouse Events Example
+        const hoverBox = document.getElementById('hoverBox');
+        hoverBox.addEventListener('mouseover', () => {
+            hoverBox.style.backgroundColor = '#3498db';
+            hoverBox.style.color = 'white';
+            hoverBox.textContent = 'Mouse is over!';
+        });
+        
+        hoverBox.addEventListener('mouseout', () => {
+            hoverBox.style.backgroundColor = '#ddd';
+            hoverBox.style.color = 'black';
+            hoverBox.textContent = 'Hover over me!';
+        });
+
+        // Keyboard Events Example
+        const keyboardInput = document.getElementById('keyboardInput');
+        const mirroredText = document.getElementById('mirroredText');
+        keyboardInput.addEventListener('input', () => {
+            mirroredText.textContent = keyboardInput.value;
+        });
+
+        // Counter functionality
+        const counterValue = document.getElementById('counterValue');
+        const incrementBtn = document.getElementById('incrementBtn');
+        const decrementBtn = document.getElementById('decrementBtn');
+        const resetCounterBtn = document.getElementById('resetCounterBtn');
+        
+        let count = 0;
+        
+        incrementBtn.addEventListener('click', () => {
+            count++;
+            counterValue.textContent = count;
+        });
+        
+        decrementBtn.addEventListener('click', () => {
+            count--;
+            counterValue.textContent = count;
+        });
+        
+        resetCounterBtn.addEventListener('click', () => {
+            count = 0;
+            counterValue.textContent = count;
+        });
+
+        // FAQ Section functionality
+        const faqQuestions = document.querySelectorAll('.faq-question');
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const isVisible = answer.classList.contains('show');
+                
+                // Close all answers
+                document.querySelectorAll('.faq-answer').forEach(ans => {
+                    ans.classList.remove('show');
+                });
+                
+                // Update all icons to +
+                document.querySelectorAll('.faq-question span:last-child').forEach(icon => {
+                    icon.textContent = '+';
+                });
+                
+                // If answer wasn't visible, show it
+                if (!isVisible) {
+                    answer.classList.add('show');
+                    question.querySelector('span:last-child').textContent = '-';
+                }
+            });
+        });
+
+        // Tabbed Interface functionality
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons and panes
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+                
+                // Add active class to clicked button and corresponding pane
+                button.classList.add('active');
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Form Validation
+        const form = document.getElementById('validationForm');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const nameError = document.getElementById('nameError');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const confirmPasswordError = document.getElementById('confirmPasswordError');
+        const successMessage = document.getElementById('successMessage');
+
+        // Helper function to validate email format
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Helper function to validate password
+        function isValidPassword(password) {
+            // At least 8 characters, one number, one uppercase letter
+            const passwordRegex = /^(?=.*\d)(?=.*[A-Z]).{8,}$/;
+            return passwordRegex.test(password);
+        }
+
+        // Validate form on submit
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let isValid = true;
+            
+            // Reset error messages
+            nameError.style.display = 'none';
+            emailError.style.display = 'none';
+            passwordError.style.display = 'none';
+            confirmPasswordError.style.display = 'none';
+            
+            // Validate name
+            if (nameInput.value.trim().length < 2) {
+                nameError.style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate email
+            if (!isValidEmail(emailInput.value)) {
+                emailError.style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate password
+            if (!isValidPassword(passwordInput.value)) {
+                passwordError.style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate password confirmation
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                confirmPasswordError.style.display = 'block';
+                isValid = false;
+            }
+            
+            // If form is valid, show success message
+            if (isValid) {
+                successMessage.style.display = 'block';
+                form.reset();
+                
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            }
+        });
+
+        // Real-time validation for better UX
+        nameInput.addEventListener('input', () => {
+            if (nameInput.value.trim().length >= 2) {
+                nameError.style.display = 'none';
+            }
+        });
+        
+        emailInput.addEventListener('input', () => {
+            if (isValidEmail(emailInput.value)) {
+                emailError.style.display = 'none';
+            }
+        });
+        
+        passwordInput.addEventListener('input', () => {
+            if (isValidPassword(passwordInput.value)) {
+                passwordError.style.display = 'none';
+            }
+        });
+        
+        confirmPasswordInput.addEventListener('input', () => {
+            if (passwordInput.value === confirmPasswordInput.value) {
+                confirmPasswordError.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
